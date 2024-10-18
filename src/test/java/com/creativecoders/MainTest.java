@@ -21,7 +21,7 @@ class ConcurentLRUCacheTest {
     Map yourLinkedHashMap = new ConcurrentHashMap(new LinkedHashMap());
 
     @org.junit.jupiter.api.Test
-    void shrinkSize() {
+    void removeItems() {
 
         IntStream.range(1, 100)
                 .forEach(index -> yourLinkedHashMap.put(index, index));
@@ -31,7 +31,7 @@ class ConcurentLRUCacheTest {
         Callable callable = new Callable() {
             @Override
             public Object call() throws Exception {
-                removeItems();
+                shrinkSize();
                 return null;
             }
         };
@@ -39,16 +39,12 @@ class ConcurentLRUCacheTest {
         List<Future<Object>> list = new ArrayList<>();
 
         for(int i=0; i< 2; i++){
-            //submit Callable tasks to be executed by thread pool
             Future<Object> future = executor.submit(callable);
-            //add Future to the list, we can get return value using Future
             list.add(future);
         }
 
         for(Future<Object> future : list){
             try {
-                //print the return value of Future, notice the output delay in console
-                // because Future.get() waits for task to get completed
                 System.out.println(new Date()+ "::"+future.get());
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -60,7 +56,7 @@ class ConcurentLRUCacheTest {
         System.out.println(yourLinkedHashMap);
     }
 
-    public void removeItems() {
+    public void shrinkSize() {
 
         Iterator<Map.Entry<Integer, Integer>> iter = yourLinkedHashMap.entrySet().iterator();
         while (iter.hasNext()) {
