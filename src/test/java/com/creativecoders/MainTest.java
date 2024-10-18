@@ -16,8 +16,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ConcurentLRUCacheTest {
     Map yourLinkedHashMap = new ConcurrentHashMap(new LinkedHashMap());
 
@@ -61,12 +59,12 @@ class ConcurentLRUCacheTest {
 
         Iterator<Map.Entry<Integer, Integer>> iter = yourLinkedHashMap.entrySet().iterator();
         while (iter.hasNext()) {
-            if (yourLinkedHashMap.size() >= 50) {
+            if (yourLinkedHashMap.size() > 50) {
                 try {
                     iter.next();
                     iter.remove();
-                    Thread.sleep(100);
-                } catch (ConcurrentModificationException | InterruptedException | NoSuchElementException e) {
+//                    Thread.sleep(100);
+                } catch (ConcurrentModificationException | NoSuchElementException e) {
                     throw new RuntimeException(e);
                 }
             } else {
