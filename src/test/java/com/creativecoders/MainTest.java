@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -60,13 +61,16 @@ class ConcurentLRUCacheTest {
 
         Iterator<Map.Entry<Integer, Integer>> iter = yourLinkedHashMap.entrySet().iterator();
         while (iter.hasNext()) {
-            if (iter.next().getValue() % 2 == 0) {
+            if (yourLinkedHashMap.size() >= 50) {
                 try {
+                    iter.next();
                     iter.remove();
                     Thread.sleep(100);
-                } catch (ConcurrentModificationException | InterruptedException e) {
+                } catch (ConcurrentModificationException | InterruptedException | NoSuchElementException e) {
                     throw new RuntimeException(e);
                 }
+            } else {
+                break;
             }
         }
     }
